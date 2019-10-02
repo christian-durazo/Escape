@@ -1,9 +1,9 @@
 package com.usigames.model;
 
 public class Item {
-	ItemType type;
-	String name;
-	String action;
+	private ItemType type;
+	private String name;
+	private String action;
 
 	public Item(ItemType type, String name, String action) {
 		this.type = type;

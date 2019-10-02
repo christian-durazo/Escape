@@ -23,13 +23,26 @@ public class Main {
 	    Item goldChest = new Item(ItemType.CHEST, "Locked Chest", "unlock");
 	    Item silverChest = new Item(ItemType.CHEST, "Locked Chest", "unlock");
 	    Item bronzeChest = new Item(ItemType.CHEST, "Unlocked Chest", "open");
+	    Item secretPassage = new Item(ItemType.DOOR, "Secret Passage(South)", "walk through");
 
 	    ArrayList<Item> collectedItems = new ArrayList<>();
 
-	    List<Room> rooms = buildRooms(goldKey, silverKey, bronzeKey, goldChest, silverChest, bronzeChest);
+	    List<Room> rooms = buildRooms();
+
+	    /*
+	    rooms.get((int) (Math.random() * rooms.size())).getItems().add(silverKey);
+	    rooms.get((int) (Math.random() * rooms.size())).getItems().add(goldChest);
+	    rooms.get((int) (Math.random() * rooms.size())).getItems().add(silverChest);
+	    rooms.get((int) (Math.random() * rooms.size())).getItems().add(bronzeChest);
+		*/
+
+	    rooms.get(5).getItems().add(silverKey);
+	    rooms.get(3).getItems().add(goldChest);
+	    rooms.get(4).getItems().add(silverChest);
+	    rooms.get(1).getItems().add(bronzeChest);
 
 	    Scanner sc = new Scanner(System.in);
-	    int userInput = 0;
+	    int userInput;
 	    int roomNumber = 0;
 
 	    while (roomNumber >= 0) {
@@ -150,11 +163,18 @@ public class Main {
 			    	System.out.println("This door is locked. You must find the Key.");
 			    }
 		    }
+
+		    if (selectedOption.contains("Grand Piano") && !curRoom.getItems().contains(secretPassage)) {
+		    	System.out.println("You strike a chord. Oddly the piano is in perfect tuning. As you play you start to notice on of the bookshelves sliding to the side revealing a hidden passage way.");
+		    	curRoom.getItems().add(secretPassage);
+		    	curRoom.getConnectedRooms().put(Directions.SOUTH, 6);
+		    	curRoom.getDirections().add(Directions.SOUTH);
+		    }
 	    }
     }
 
-    private static List<Room> buildRooms(Item goldKey, Item silverKey, Item bronzeKey, Item goldChest, Item silverChest, Item bronzeChest){
-        ArrayList<Room> rooms = new ArrayList<Room>();
+    private static List<Room> buildRooms(){
+        ArrayList<Room> rooms = new ArrayList<>();
 
     	rooms.add(new Room("You are in a dusty room filled floor to ceiling with bookshelves. There is a piano in the south-east corner, a door to the west, and another door to the north.",
 		    new ArrayList<>(Arrays.asList(Directions.NORTH, Directions.WEST)),
@@ -170,11 +190,10 @@ public class Main {
     	));
 
 	    rooms.add(new Room("You are in a dark closet. There is a chest hidden behind some dusty coats. The only door is the one you came in from to the east.",
-		    new ArrayList<>(Arrays.asList(Directions.EAST)),
-		    new ArrayList<>(Arrays.asList(
-			    new Item(ItemType.DOOR, "Unlocked Door(East)", "open"),
-			    bronzeChest
-		    )),
+		    new ArrayList<>(Collections.singletonList(Directions.EAST)),
+		    new ArrayList<>(Collections.singletonList(
+					new Item(ItemType.DOOR, "Unlocked Door(East)", "open")
+			)),
 		    new HashMap<Directions, Integer>(){{
 			    put(Directions.EAST, 0);
 		    }}
@@ -193,12 +212,11 @@ public class Main {
 			    put(Directions.EAST, 3);
 		    }}
 	    ));
-	    rooms.add(new Room("You are the great hall. There is a large table in the middle of the room with scraps of rotten food. There is a chest in the corner, a door to the west, and another door to the south.",
+	    rooms.add(new Room("You are in the great hall. There is a large table in the middle of the room with scraps of rotten food. There is a chest in the corner, a door to the west, and another door to the south.",
 		    new ArrayList<>(Arrays.asList(Directions.SOUTH, Directions.WEST)),
 		    new ArrayList<>(Arrays.asList(
 	            new Item(ItemType.DOOR, "Unlocked Door(South)", "open"),
-			    new Item(ItemType.DOOR, "Unlocked Door(West)", "open"),
-			    goldChest
+			    new Item(ItemType.DOOR, "Unlocked Door(West)", "open")
 		    )),
 		    new HashMap<Directions, Integer>(){{
 			    put(Directions.SOUTH, 4);
@@ -210,8 +228,7 @@ public class Main {
 		    new ArrayList<>(Arrays.asList(Directions.NORTH, Directions.SOUTH)),
 		    new ArrayList<>(Arrays.asList(
 	            new Item(ItemType.DOOR, "Unlocked Door(North)", "open"),
-			    new Item(ItemType.DOOR, "Unlocked Door(South)", "open"),
-			    silverChest
+			    new Item(ItemType.DOOR, "Unlocked Door(South)", "open")
 		    )),
 		    new HashMap<Directions, Integer>(){{
 			    put(Directions.NORTH, 3);
@@ -220,16 +237,24 @@ public class Main {
 	    ));
 
 	    rooms.add(new Room("You are in a cold dark wine cellar. There are stacks of wine bottles and a small key on the floor. The only door is the one you came in from to the north.",
-		    new ArrayList<>(Arrays.asList(Directions.NORTH)),
-		    new ArrayList<>(Arrays.asList(
-	            new Item(ItemType.DOOR, "Unlocked Door(North)", "open"),
-				silverKey
-		    )),
+		    new ArrayList<>(Collections.singletonList(Directions.NORTH)),
+		    new ArrayList<>(Collections.singletonList(
+					new Item(ItemType.DOOR, "Unlocked Door(North)", "open")
+			)),
 		    new HashMap<Directions, Integer>(){{
 			    put(Directions.NORTH, 4);
 		    }}
 	    ));
 
+	    rooms.add(new Room("You are in the secret corridor. It is very dark. All you can see is the door that you came in from to the north.",
+			    new ArrayList<>(Collections.singletonList(Directions.NORTH)),
+			    new ArrayList<>(Collections.singletonList(
+						new Item(ItemType.DOOR, "Unlocked Door(North)", "open")
+				)),
+			    new HashMap<Directions, Integer>(){{
+				    put(Directions.NORTH, 0);
+			    }}
+	    ));
 
 	    return rooms;
     }
